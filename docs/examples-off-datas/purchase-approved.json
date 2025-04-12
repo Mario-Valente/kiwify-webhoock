@@ -1,0 +1,129 @@
+{
+    "order_id": "cab27483-b3a0-495d-a043-1e5052ccfa88",
+    "order_ref": "rafZeyc",
+    "order_status": "paid",
+    "product_type": "membership",
+    "payment_method": "credit_card",
+    "store_id": "1FdAUiflFhm4EiL",
+    "payment_merchant_id": 63816088,
+    "installments": 1,
+    "card_type": "mastercard",
+    "card_last4digits": "3345",
+    "card_rejection_reason": null,
+    "boleto_URL": null,
+    "boleto_barcode": null,
+    "boleto_expiry_date": null,
+    "pix_code": null,
+    "pix_expiration": null,
+    "sale_type": "producer",
+    "created_at": "2025-04-08 02:23",
+    "updated_at": "2025-04-08 02:23",
+    "approved_date": "2025-04-09 02:23",
+    "refunded_at": null,
+    "webhook_event_type": "order_approved",
+    "Product": {
+        "product_id": "1ea9f3c6-19ae-4371-b2b7-988cda25e9bb",
+        "product_name": "Example product"
+    },
+    "Customer": {
+        "full_name": "John Doe",
+        "first_name": "John",
+        "email": "johndoe@example.com",
+        "mobile": "+20438708863",
+        "cnpj": "51949075946896",
+        "ip": "223.184.118.128",
+        "instagram": "@kiwify",
+        "street": "Rua 1001",
+        "number": "315",
+        "complement": "SL 05",
+        "neighborhood": "Centro",
+        "city": "Balneário Camboriú",
+        "state": "SC",
+        "zipcode": "88330-756"
+    },
+    "Commissions": {
+        "charge_amount": 9149,
+        "product_base_price": 9149,
+        "product_base_price_currency": "BRL",
+        "kiwify_fee": 1006,
+        "kiwify_fee_currency": "BRL",
+        "settlement_amount": 9149,
+        "settlement_amount_currency": "BRL",
+        "sale_tax_rate": 0,
+        "sale_tax_amount": 0,
+        "commissioned_stores": [
+            {
+                "id": "28182e5a-ece3-4212-a5b9-2054da35efc0",
+                "type": "producer",
+                "custom_name": "Example store",
+                "email": "example@store.domain",
+                "value": "8143"
+            },
+            {
+                "id": "1800678b-d5d9-4411-bee8-23219aa4d5fe",
+                "type": "coproducer",
+                "custom_name": "Example coproducer",
+                "email": "example@coproducer.domain",
+                "value": "8143"
+            },
+            {
+                "id": "6631ecb3-10f2-4add-bdc2-9cf5ae158786",
+                "type": "affiliate",
+                "affiliate_id": "BCkScGt",
+                "custom_name": "Example affiliate",
+                "email": "example@affiliate.domain",
+                "value": "8143"
+            }
+        ],
+        "currency": "BRL",
+        "my_commission": 8143,
+        "funds_status": null,
+        "estimated_deposit_date": null,
+        "deposit_date": null
+    },
+    "TrackingParameters": {
+        "src": null,
+        "sck": null,
+        "utm_source": null,
+        "utm_medium": null,
+        "utm_campaign": null,
+        "utm_content": null,
+        "utm_term": null,
+        "s1": null,
+        "s2": null,
+        "s3": null
+    },
+    "Subscription": {
+        "id": "526eb029-5a18-49a1-a940-366016481373",
+        "start_date": "2025-04-05T02:23:51.006Z",
+        "next_payment": "2025-04-12T02:23:51.006Z",
+        "status": "active",
+        "plan": {
+            "id": "bcc66929-51ce-4ca8-ad8d-b1a83cf31df9",
+            "name": "Example plan",
+            "frequency": "weekly",
+            "qty_charges": 0
+        },
+        "charges": {
+            "completed": [
+                {
+                    "order_id": "cab27483-b3a0-495d-a043-1e5052ccfa77",
+                    "amount": 8143,
+                    "status": "paid",
+                    "installments": 1,
+                    "card_type": "mastercard",
+                    "card_last_digits": "5589",
+                    "card_first_digits": "101697",
+                    "created_at": "2025-04-05T02:23:51.006Z"
+                }
+            ],
+            "future": [
+                {
+                    "charge_date": "2025-04-12T02:23:51.006Z"
+                }
+            ]
+        }
+    },
+    "subscription_id": "526eb029-5a18-49a1-a940-366016481373",
+    "access_url": null
+}

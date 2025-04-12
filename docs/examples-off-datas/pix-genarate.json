@@ -1,0 +1,128 @@
+{
+    "order_id": "61b82f43-51d4-40b5-9c2b-6c2f9bbb017d",
+    "order_ref": "AJuKvWn",
+    "order_status": "waiting_payment",
+    "product_type": "membership",
+    "payment_method": "pix",
+    "store_id": "fFprsI7Y23N9FXh",
+    "payment_merchant_id": 50944316,
+    "installments": null,
+    "card_type": "",
+    "card_last4digits": "",
+    "card_rejection_reason": null,
+    "boleto_URL": null,
+    "boleto_barcode": null,
+    "boleto_expiry_date": null,
+    "pix_code": "00020101021226840014br.gov.bcb.pix2562pix-h.stone.com.br/pix/v2/ee77b9e9-67fb-4b62-829b-b6537068aa7b5204000053039865406970.005802BR5924Pagar.me Pagamentos S.A.6014RIO DE JANEIRO622905253b6997c1ef2f4b2597b6e11de6304ED77",
+    "pix_expiration": "12/04/2025 02:21",
+    "sale_type": "producer",
+    "created_at": "2025-04-08 02:21",
+    "updated_at": "2025-04-08 02:21",
+    "approved_date": null,
+    "refunded_at": null,
+    "webhook_event_type": "pix_created",
+    "Product": {
+        "product_id": "7db8041e-d7b3-4509-80d9-645105bf891a",
+        "product_name": "Example product"
+    },
+    "Customer": {
+        "full_name": "John Doe",
+        "first_name": "John",
+        "email": "johndoe@example.com",
+        "mobile": "+44201581389",
+        "cnpj": "85523990522298",
+        "ip": "e46e:afe2:8c75:f7f3:d889:6b05:eb83:4981",
+        "instagram": "@kiwify",
+        "street": "Rua 1001",
+        "number": "315",
+        "complement": "SL 05",
+        "neighborhood": "Centro",
+        "city": "Balneário Camboriú",
+        "state": "SC",
+        "zipcode": "88330-756"
+    },
+    "Commissions": {
+        "charge_amount": 5912,
+        "product_base_price": 5912,
+        "product_base_price_currency": "BRL",
+        "kiwify_fee": 650,
+        "kiwify_fee_currency": "BRL",
+        "settlement_amount": 5912,
+        "settlement_amount_currency": "BRL",
+        "sale_tax_rate": 0,
+        "sale_tax_amount": 0,
+        "commissioned_stores": [
+            {
+                "id": "4edcf7c4-c07f-488c-a3bf-a4eccb61ba87",
+                "type": "producer",
+                "custom_name": "Example store",
+                "email": "example@store.domain",
+                "value": "5262"
+            },
+            {
+                "id": "1851ac74-cb45-4164-8a43-097cc5a0e75c",
+                "type": "coproducer",
+                "custom_name": "Example coproducer",
+                "email": "example@coproducer.domain",
+                "value": "5262"
+            },
+            {
+                "id": "9f5cd241-fcde-4806-a297-aa6b10fec560",
+                "type": "affiliate",
+                "affiliate_id": "uvHrFrn",
+                "custom_name": "Example affiliate",
+                "email": "example@affiliate.domain",
+                "value": "5262"
+            }
+        ],
+        "currency": "BRL",
+        "my_commission": 5262,
+        "funds_status": null,
+        "estimated_deposit_date": null,
+        "deposit_date": null
+    },
+    "TrackingParameters": {
+        "src": null,
+        "sck": null,
+        "utm_source": null,
+        "utm_medium": null,
+        "utm_campaign": null,
+        "utm_content": null,
+        "utm_term": null,
+        "s1": null,
+        "s2": null,
+        "s3": null
+    },
+    "Subscription": {
+        "id": "80cda794-c425-4eb6-8d7e-78c17064e2ea",
+        "start_date": "2025-04-05T02:21:45.050Z",
+        "next_payment": "2025-04-12T02:21:45.050Z",
+        "status": "active",
+        "plan": {
+            "id": "cb23eff5-188a-430f-ad8e-f6a2318209e5",
+            "name": "Example plan",
+            "frequency": "weekly",
+            "qty_charges": 0
+        },
+        "charges": {
+            "completed": [
+                {
+                    "order_id": "61b82f43-51d4-40b5-9c2b-6c2f9bbb017d",
+                    "amount": 5262,
+                    "status": "paid",
+                    "installments": 1,
+                    "card_type": "mastercard",
+                    "card_last_digits": "2067",
+                    "card_first_digits": "346858",
+                    "created_at": "2025-04-05T02:21:45.050Z"
+                }
+            ],
+            "future": [
+                {
+                    "charge_date": "2025-04-12T02:21:45.050Z"
+                }
+            ]
+        }
+    },
+    "subscription_id": "80cda794-c425-4eb6-8d7e-78c17064e2ea"
+}
