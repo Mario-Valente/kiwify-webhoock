@@ -33,7 +33,7 @@ func get(c *fiber.Ctx) error {
 		})
 	}
 
-	result, err := Get(c.UserContext(), orderStatus)
+	result, err := GetAllByStatus(c.UserContext(), orderStatus)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Failed to retrieve data",

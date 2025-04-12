@@ -33,28 +33,43 @@ func Post(ctx context.Context, body *models.Purchase) (models.Purchase, error) {
 	return *body, nil
 }
 
-func Get(ctx context.Context, order_status string) (models.Purchase, error) {
+func GetAllByStatus(ctx context.Context, order_status string) ([]models.Purchase, error) {
 	if order_status == "" {
-		return models.Purchase{}, fmt.Errorf("customer name is empty")
+		return []models.Purchase{}, fmt.Errorf("order status is required")
 	}
 
 	client, err := config.GetClientMongoDB()
 	if err != nil {
-		return models.Purchase{}, fmt.Errorf("failed to connect to MongoDB: %v", err)
+		return []models.Purchase{}, fmt.Errorf("failed to connect to MongoDB: %v", err)
 	}
 
 	defer client.Disconnect(ctx)
 
 	collection := client.Database("kiwify").Collection("webhook")
-	var result models.Purchase
 
-	err = collection.FindOne(ctx, bson.M{
-		"orderstatus": order_status,
-	}).Decode(&result)
+	filter := bson.M{"orderstatus": order_status}
 
+	cursor, err := collection.Find(ctx, filter)
 	if err != nil {
-		return models.Purchase{}, fmt.Errorf("failed to find document: %v", err)
+		return []models.Purchase{}, fmt.Errorf("failed to find documents: %v", err)
+	}
+	defer cursor.Close(ctx)
+
+	var results []models.Purchase
+
+	for cursor.Next(ctx) {
+		var purchase models.Purchase
+		if err := cursor.Decode(&purchase); err != nil {
+			return []models.Purchase{}, fmt.Errorf("failed to decode document: %v", err)
+		}
+		results = append(results, purchase)
+	}
+	if err := cursor.Err(); err != nil {
+		return []models.Purchase{}, fmt.Errorf("cursor error: %v", err)
+	}
+	if len(results) == 0 {
+		return []models.Purchase{}, fmt.Errorf("no documents found with order status: %s", order_status)
 	}
 
-	return result, nil
+	return results, nil
 }

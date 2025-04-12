@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 )
@@ -24,14 +25,18 @@ type Config struct {
 	SSLClientAuth         bool   `json:"ssl_client_auth"`
 	SSLClientCA           string `json:"ssl_client_ca"`
 	SSLClientCert         string `json:"ssl_client_cert"`
+	Key                   string `json:"key"`
+	ServiceName           string `json:"service_name"`
 }
 
 func NewConfig() *Config {
 	return &Config{
-		MongoURL: getEnv("MONGO_URL", "mongodb://localhost:27017"),
-		Port:     getEnv("PORT", "8080"),
-		Env:      getEnv("ENV", "development"),
-		Host:     getEnv("HOST", "localhost"),
+		MongoURL:    getEnv("MONGO_URL", "mongodb://localhost:27017"),
+		Env:         getEnv("ENV", "development"),
+		Host:        getEnv("HOST", "localhost"),
+		Secret:      getEnv("MONGO_SECRET", "password"),
+		Key:         getEnv("MONGO_KEY", "admin"),
+		ServiceName: getEnv("SERVICE_NAME", "kiwify-webhook"),
 	}
 }
 
@@ -51,16 +56,13 @@ func getEnvAsBool(key string, defaultValue bool) bool {
 }
 
 func (c *Config) CreateURIMongoDB() string {
+	var uri string
 
-	uri := c.MongoURL
-
-	if c.Env == "development" {
-		uri = "mongodb://localhost:27017"
-	}
-	if c.Env == "production" {
-		uri = "mongodb://mongo:27017"
+	if c.Env == "development" || c.Env == "production" {
+		uri = fmt.Sprintf("mongodb://%s:%s@localhost:27017", c.Key, c.Secret)
+	} else {
+		uri = c.MongoURL
 	}
 
 	return uri
-
 }
