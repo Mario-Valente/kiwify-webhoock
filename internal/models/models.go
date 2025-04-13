@@ -128,3 +128,20 @@ type CompletedCharge struct {
 type FutureCharge struct {
 	ChargeDate string `json:"charge_date"`
 }
+
+type Abandoned struct {
+	CheckoutLink     string  `json:"checkout_link"`
+	Country          string  `json:"country"`
+	CNPJ             string  `json:"cnpj"`
+	CreatedAt        string  `json:"created_at"`
+	Email            string  `json:"email"`
+	ID               string  `json:"id"`
+	Name             string  `json:"name"`
+	OfferName        string  `json:"offer_name"`
+	Phone            string  `json:"phone"`
+	ProductID        string  `json:"product_id"`
+	ProductName      string  `json:"product_name"`
+	Status           string  `json:"status"`
+	StoreID          string  `json:"store_id"`
+	SubscriptionPlan *string `json:"subscription_plan"`
+}

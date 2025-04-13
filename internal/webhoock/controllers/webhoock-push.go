@@ -21,14 +21,18 @@ func Post(ctx context.Context, body *models.Purchase) (models.Purchase, error) {
 		return models.Purchase{}, fmt.Errorf("failed to connect to MongoDB: %v", err)
 	}
 
-	go SendTelegramMessage(ctx, fmt.Sprintf("Received a new sale with the status: %s name: %s  com o metodo de pagamento: %s ", body.OrderStatus, body.Customer.FullName, body.PaymentMethod))
-	if err != nil {
+	message := fmt.Sprintf(
+		"⚠ Nova venda recebida! \n\n📦 Status:  %s \n👤 Cliente:  %s \n💳 Método de pagamento: %s \n📧 email: %s \n📱 telefone: %s",
+		body.OrderStatus, body.Customer.FullName, body.PaymentMethod, body.Customer.Email, body.Customer.Mobile,
+	)
+
+	if err := SendTelegramMessage(ctx, message); err != nil {
 		return models.Purchase{}, fmt.Errorf("failed to send telegram message: %v", err)
 	}
 
 	defer client.Disconnect(ctx)
 
-	collection := client.Database("kiwify").Collection("webhook")
+	collection := client.Database("kiwify").Collection("purchases")
 	_, err = collection.InsertOne(ctx, body)
 	if err != nil {
 		return models.Purchase{}, fmt.Errorf("failed to insert document: %v", err)
@@ -50,7 +54,7 @@ func GetAllByStatus(ctx context.Context, order_status string) ([]models.Purchase
 
 	defer client.Disconnect(ctx)
 
-	collection := client.Database("kiwify").Collection("webhook")
+	collection := client.Database("kiwify").Collection("purchases")
 
 	filter := bson.M{"orderstatus": order_status}
 
@@ -72,8 +76,77 @@ func GetAllByStatus(ctx context.Context, order_status string) ([]models.Purchase
 	if err := cursor.Err(); err != nil {
 		return []models.Purchase{}, fmt.Errorf("cursor error: %v", err)
 	}
+
 	if len(results) == 0 {
 		return []models.Purchase{}, fmt.Errorf("no documents found with order status: %s", order_status)
+	}
+
+	return results, nil
+}
+
+func PostAbandoned(ctx context.Context, body *models.Abandoned) (models.Abandoned, error) {
+	if body == nil {
+		return models.Abandoned{}, fmt.Errorf("body is nil")
+	}
+
+	fmt.Println("Received abandoned webhook:", body.ID)
+
+	client, err := config.GetClientMongoDB()
+	if err != nil {
+		return models.Abandoned{}, fmt.Errorf("failed to connect to MongoDB: %v", err)
+	}
+
+	defer client.Disconnect(ctx)
+
+	message := fmt.Sprintf(
+		"🚨 Carrinhooooo abandonadOOOOOO olhar com atenção! \n👤 Cliente:  %s \n🌍 Pais: %s \n📧 email: %s \n📱 telefone: %s",
+		body.Name, body.Country, body.Email, body.Phone,
+	)
+	if err := SendTelegramMessage(ctx, message); err != nil {
+		return models.Abandoned{}, fmt.Errorf("failed to send telegram message: %v", err)
+	}
+
+	collection := client.Database("kiwify").Collection("abandoned")
+	_, err = collection.InsertOne(ctx, body)
+	if err != nil {
+		return models.Abandoned{}, fmt.Errorf("failed to insert document: %v", err)
+	}
+	fmt.Println("Document inserted successfully")
+
+	return *body, nil
+}
+
+func GetAllAbandoned(ctx context.Context) ([]models.Abandoned, error) {
+	client, err := config.GetClientMongoDB()
+	if err != nil {
+		return []models.Abandoned{}, fmt.Errorf("failed to connect to MongoDB: %v", err)
+	}
+
+	defer client.Disconnect(ctx)
+
+	collection := client.Database("kiwify").Collection("abandoned")
+
+	cursor, err := collection.Find(ctx, bson.M{})
+	if err != nil {
+		return []models.Abandoned{}, fmt.Errorf("failed to find documents: %v", err)
+	}
+	defer cursor.Close(ctx)
+
+	var results []models.Abandoned
+
+	for cursor.Next(ctx) {
+		var abandoned models.Abandoned
+		if err := cursor.Decode(&abandoned); err != nil {
+			return []models.Abandoned{}, fmt.Errorf("failed to decode document: %v", err)
+		}
+		results = append(results, abandoned)
+	}
+	if err := cursor.Err(); err != nil {
+		return []models.Abandoned{}, fmt.Errorf("cursor error: %v", err)
+	}
+
+	if len(results) == 0 {
+		return []models.Abandoned{}, fmt.Errorf("no documents found")
 	}
 
 	return results, nil

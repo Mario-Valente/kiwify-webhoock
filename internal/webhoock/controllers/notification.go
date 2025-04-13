@@ -8,8 +8,6 @@ import (
 	"github.com/go-telegram/bot"
 )
 
-// use telegram bot api to send message
-
 func SendTelegramMessage(ctx context.Context, message string) error {
 
 	config := config.NewConfig()
