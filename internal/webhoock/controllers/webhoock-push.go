@@ -21,6 +21,11 @@ func Post(ctx context.Context, body *models.Purchase) (models.Purchase, error) {
 		return models.Purchase{}, fmt.Errorf("failed to connect to MongoDB: %v", err)
 	}
 
+	go SendTelegramMessage(ctx, fmt.Sprintf("Received a new sale with the status: %s name: %s  com o metodo de pagamento: %s ", body.OrderStatus, body.Customer.FullName, body.PaymentMethod))
+	if err != nil {
+		return models.Purchase{}, fmt.Errorf("failed to send telegram message: %v", err)
+	}
+
 	defer client.Disconnect(ctx)
 
 	collection := client.Database("kiwify").Collection("webhook")

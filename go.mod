@@ -3,6 +3,7 @@ module github.com/Mario-Valente/kiwify-webhoock
 go 1.23.7
 
 require (
+	github.com/go-telegram/bot v1.14.2
 	github.com/gofiber/fiber/v2 v2.52.6
 	go.mongodb.org/mongo-driver v1.17.3
 )

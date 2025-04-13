@@ -27,16 +27,21 @@ type Config struct {
 	SSLClientCert         string `json:"ssl_client_cert"`
 	Key                   string `json:"key"`
 	ServiceName           string `json:"service_name"`
+	TokenTelegram         string `json:"token_telegram"`
+	ChatID                string `json:"chat_id"`
 }
 
 func NewConfig() *Config {
 	return &Config{
-		MongoURL:    getEnv("MONGO_URL", "mongodb://localhost:27017"),
-		Env:         getEnv("ENV", "development"),
-		Host:        getEnv("HOST", "localhost"),
-		Secret:      getEnv("MONGO_SECRET", "password"),
-		Key:         getEnv("MONGO_KEY", "admin"),
-		ServiceName: getEnv("SERVICE_NAME", "kiwify-webhook"),
+		MongoURL:      getEnv("MONGO_URL", "mongodb://localhost:27017"),
+		Env:           getEnv("ENV", "development"),
+		Host:          getEnv("HOST", "localhost"),
+		Secret:        getEnv("MONGO_SECRET", "password"),
+		Key:           getEnv("MONGO_KEY", "admin"),
+		ServiceName:   getEnv("SERVICE_NAME", "kiwify-webhook"),
+		Port:          getEnv("PORT", ":3000"),
+		TokenTelegram: getEnv("TOKEN_TELEGRAM", ""),
+		ChatID:        getEnv("CHAT_ID", ""),
 	}
 }
 
