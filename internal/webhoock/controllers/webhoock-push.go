@@ -7,6 +7,8 @@ import (
 	"github.com/Mario-Valente/kiwify-webhoock/internal/config"
 	"github.com/Mario-Valente/kiwify-webhoock/internal/models"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func Post(ctx context.Context, body *models.Purchase) (models.Purchase, error) {
@@ -26,10 +28,12 @@ func Post(ctx context.Context, body *models.Purchase) (models.Purchase, error) {
 		body.OrderStatus, body.Customer.FullName, body.PaymentMethod, body.Customer.Email, body.Customer.Mobile,
 	)
 
-	if err := SendTelegramMessage(ctx, message); err != nil {
-		return models.Purchase{}, fmt.Errorf("failed to send telegram message: %v", err)
-	}
-
+	go func() {
+		err := SendTelegramMessage(ctx, message)
+		if err != nil {
+			fmt.Println("Error sending message:", err)
+		}
+	}()
 	defer client.Disconnect(ctx)
 
 	collection := client.Database("kiwify").Collection("purchases")
@@ -102,11 +106,30 @@ func PostAbandoned(ctx context.Context, body *models.Abandoned) (models.Abandone
 		"🚨 Carrinhooooo abandonadOOOOOO olhar com atenção! \n👤 Cliente:  %s \n🌍 Pais: %s \n📧 email: %s \n📱 telefone: %s",
 		body.Name, body.Country, body.Email, body.Phone,
 	)
-	if err := SendTelegramMessage(ctx, message); err != nil {
-		return models.Abandoned{}, fmt.Errorf("failed to send telegram message: %v", err)
-	}
+
+	go func() {
+		err := SendTelegramMessage(ctx, message)
+		if err != nil {
+			fmt.Println("Error sending message:", err)
+		}
+
+	}()
 
 	collection := client.Database("kiwify").Collection("abandoned")
+
+	// to do: remove the index creation from here
+
+	emailModel := mongo.IndexModel{
+		Keys: bson.M{
+			"email": 1,
+		},
+		Options: options.Index().SetUnique(true),
+	}
+
+	_, err = collection.Indexes().CreateOne(ctx, emailModel)
+	if err != nil {
+		return models.Abandoned{}, fmt.Errorf("failed to create index: %v", err)
+	}
 	_, err = collection.InsertOne(ctx, body)
 	if err != nil {
 		return models.Abandoned{}, fmt.Errorf("failed to insert document: %v", err)
