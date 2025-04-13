@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/Mario-Valente/kiwify-webhoock/cmd"
 	"github.com/Mario-Valente/kiwify-webhoock/internal/config"
 	"github.com/Mario-Valente/kiwify-webhoock/internal/health"
 	webhook "github.com/Mario-Valente/kiwify-webhoock/internal/webhoock/controllers"
@@ -27,6 +28,13 @@ func main() {
 			Output:     os.Stdout,
 		},
 	))
+
+	go func() {
+		if err := cmd.BotHandler(); err != nil {
+			log.Println("Error starting bot:", err)
+		}
+
+	}()
 
 	err := app.Listen(config.Port)
 	if err != nil {
