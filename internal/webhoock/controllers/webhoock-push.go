@@ -12,6 +12,7 @@ import (
 )
 
 func Post(ctx context.Context, body *models.Purchase) (models.Purchase, error) {
+
 	if body == nil {
 		return models.Purchase{}, fmt.Errorf("body is nil")
 	}
@@ -24,8 +25,8 @@ func Post(ctx context.Context, body *models.Purchase) (models.Purchase, error) {
 	}
 
 	message := fmt.Sprintf(
-		"⚠ Nova venda recebida! \n\n📦 Status:  %s \n👤 Cliente:  %s \n💳 Método de pagamento: %s \n📧 email: %s \n📱 telefone: %s",
-		body.OrderStatus, body.Customer.FullName, body.PaymentMethod, body.Customer.Email, body.Customer.Mobile,
+		"⚠ Venda %s recebida! \n\n📦 Status:  %s \n👤 Cliente:  %s \n💳 Método de pagamento: %s \n📧 email: %s \n📱 telefone: %s",
+		body.OrderStatus, body.OrderStatus, body.Customer.FullName, body.PaymentMethod, body.Customer.Email, body.Customer.Mobile,
 	)
 
 	go func() {
@@ -34,7 +35,12 @@ func Post(ctx context.Context, body *models.Purchase) (models.Purchase, error) {
 			fmt.Println("Error sending message:", err)
 		}
 	}()
-	defer client.Disconnect(ctx)
+
+	defer func() {
+		if err := client.Disconnect(ctx); err != nil {
+			fmt.Println("Error disconnecting from MongoDB:", err)
+		}
+	}()
 
 	collection := client.Database("kiwify").Collection("purchases")
 	_, err = collection.InsertOne(ctx, body)
@@ -56,7 +62,11 @@ func GetAllByStatus(ctx context.Context, order_status string) ([]models.Purchase
 		return []models.Purchase{}, fmt.Errorf("failed to connect to MongoDB: %v", err)
 	}
 
-	defer client.Disconnect(ctx)
+	defer func() {
+		if err := client.Disconnect(ctx); err != nil {
+			fmt.Println("Error disconnecting from MongoDB:", err)
+		}
+	}()
 
 	collection := client.Database("kiwify").Collection("purchases")
 
@@ -100,7 +110,11 @@ func PostAbandoned(ctx context.Context, body *models.Abandoned) (models.Abandone
 		return models.Abandoned{}, fmt.Errorf("failed to connect to MongoDB: %v", err)
 	}
 
-	defer client.Disconnect(ctx)
+	defer func() {
+		if err := client.Disconnect(ctx); err != nil {
+			fmt.Println("Error disconnecting from MongoDB:", err)
+		}
+	}()
 
 	message := fmt.Sprintf(
 		"🚨 Carrinhooooo abandonadOOOOOO olhar com atenção! \n👤 Cliente:  %s \n🌍 Pais: %s \n📧 email: %s \n📱 telefone: %s",
@@ -145,7 +159,11 @@ func GetAllAbandoned(ctx context.Context) ([]models.Abandoned, error) {
 		return []models.Abandoned{}, fmt.Errorf("failed to connect to MongoDB: %v", err)
 	}
 
-	defer client.Disconnect(ctx)
+	defer func() {
+		if err := client.Disconnect(ctx); err != nil {
+			fmt.Println("Error disconnecting from MongoDB:", err)
+		}
+	}()
 
 	collection := client.Database("kiwify").Collection("abandoned")
 
