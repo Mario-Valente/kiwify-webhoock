@@ -1,4 +1,4 @@
-FROM golang:1.23.6-alpine3.20 AS builder
+FROM golang:1.24.2-alpine3.20 AS builder
 
 WORKDIR /go/src/app
 
@@ -8,7 +8,7 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -C ./src -o /go/bin/app
+RUN go build  -o /go/bin/app
 
 FROM alpine:3.20
 
