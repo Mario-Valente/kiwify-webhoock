@@ -74,10 +74,27 @@ func getAllAbandoned(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(result)
 }
+func getAllByPaymentMethod(c *fiber.Ctx) error {
+	paymentMethod := c.Params("paymentMethod")
+	if paymentMethod == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Payment method is required",
+		})
+	}
+	result, err := GetAllByPaymentMethod(c.UserContext(), paymentMethod)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to retrieve data",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(result)
+}
 
 func Register(app *fiber.App) {
 	app.Post("/webhook", post)
 	app.Post("/webhook/abandoned", postAbandoned)
 	app.Get("/webhook/abandoned", getAllAbandoned)
 	app.Get("/webhook/:orderStatus", get)
+	app.Get("/webhook/payment/:paymentMethod", getAllByPaymentMethod)
 }

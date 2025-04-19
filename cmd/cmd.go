@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"regexp"
 
 	"github.com/Mario-Valente/kiwify-webhoock/internal/config"
 	webhook "github.com/Mario-Valente/kiwify-webhoock/internal/webhoock/controllers"
@@ -74,17 +76,38 @@ func BotHandler() error {
 		}
 	})
 
-	b.RegisterHandler(bot.HandlerTypeMessageText, "/refused", bot.MatchTypeExact, func(ctx context.Context, b *bot.Bot, update *models.Update) {
+	re := regexp.MustCompile(`^(\/refused|\/waiting_payment|\/refunded|\/chargedback)`)
+
+	b.RegisterHandlerRegexp(bot.HandlerTypeMessageText, re, func(ctx context.Context, b *bot.Bot, update *models.Update) {
 		chatID := update.Message.Chat.ID
 		_, err := b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: chatID,
-			Text:   "🔍 Buscando vendas recusadas, aguarde um momento...",
+			Text:   "🔍 Buscando vendas por status, aguarde um momento...",
 		})
 		if err != nil {
 			log.Println("Erro ao enviar mensagem inicial:", err)
 			return
 		}
-		purchases, err := webhook.GetAllByStatus(ctx, "refused")
+
+		command := update.Message.Text
+		var status string
+		switch command {
+		case "/refused":
+			status = "refused"
+		case "/waiting_payment":
+			status = "waiting_payment"
+		case "/refunded":
+			status = "refunded"
+		case "/chargedback":
+			status = "chargedback"
+		default:
+			_, _ = b.SendMessage(ctx, &bot.SendMessageParams{
+				ChatID: chatID,
+				Text:   "❌ Comando inválido.",
+			})
+			return
+		}
+		purchases, err := webhook.GetAllByStatus(ctx, status)
 		if err != nil {
 			_, _ = b.SendMessage(ctx, &bot.SendMessageParams{
 				ChatID: chatID,
@@ -92,7 +115,57 @@ func BotHandler() error {
 			})
 			return
 		}
-		message := "🛒 Vendas recusadas encontradas:\n\n"
+		message := fmt.Sprintf("🛒 Vendas com status %s encontradas:\n\n", status)
+		for i, p := range purchases {
+			message += formatPurchase(p, i+1)
+		}
+		_, err = b.SendMessage(ctx, &bot.SendMessageParams{
+			ChatID: chatID,
+			Text:   message,
+		})
+		if err != nil {
+			log.Println("Erro ao enviar dados:", err)
+		}
+	})
+
+	rePaymentMethod := regexp.MustCompile(`^(\/credit_card|\/pix|\/boleto)`)
+
+	b.RegisterHandlerRegexp(bot.HandlerTypeMessageText, rePaymentMethod, func(ctx context.Context, b *bot.Bot, update *models.Update) {
+		chatID := update.Message.Chat.ID
+		_, err := b.SendMessage(ctx, &bot.SendMessageParams{
+			ChatID: chatID,
+			Text:   "🔍 Buscando vendas por metodo de pagamento, aguarde um momento...",
+		})
+		if err != nil {
+			log.Println("Erro ao enviar mensagem inicial:", err)
+			return
+		}
+
+		command := update.Message.Text
+		var payment_method string
+		switch command {
+		case "/credit_card":
+			payment_method = "credit_card"
+		case "/pix":
+			payment_method = "pix"
+		case "/boleto":
+			payment_method = "boleto"
+		default:
+			_, _ = b.SendMessage(ctx, &bot.SendMessageParams{
+				ChatID: chatID,
+				Text:   "❌ Comando inválido.",
+			})
+			return
+		}
+		purchases, err := webhook.GetAllByPaymentMethod(ctx, payment_method)
+		if err != nil {
+			_, _ = b.SendMessage(ctx, &bot.SendMessageParams{
+				ChatID: chatID,
+				Text:   "❌ Erro ao buscar dados: " + err.Error(),
+			})
+			return
+		}
+		message := fmt.Sprintf("🛒 Vendas com payment_method %s encontradas:\n\n", payment_method)
 		for i, p := range purchases {
 			message += formatPurchase(p, i+1)
 		}
