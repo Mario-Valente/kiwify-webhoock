@@ -19,11 +19,12 @@ func formatAbandoned(p models.Abandoned, index int) string {
 
 func formatPurchase(p models.Purchase, index int) string {
 	return fmt.Sprintf(
-		"%d. 🧾 Nome: %s\n📧 Email: %s\n💰 Phone: %s \n🌍 Estado: %s\n\n",
+		"%d. 🧾 Nome: %s\n📧 Email: %s\n💰 Phone: %s\n🌍 Estado: %s\n Order Status: %s\n\n",
 		index,
 		p.Customer.FullName,
 		p.Customer.Email,
 		p.Customer.Mobile,
 		p.Customer.State,
+		p.OrderStatus,
 	)
 }

@@ -192,3 +192,48 @@ func GetAllAbandoned(ctx context.Context) ([]models.Abandoned, error) {
 
 	return results, nil
 }
+
+func GetAllByPaymentMethod(ctx context.Context, payment_method string) ([]models.Purchase, error) {
+
+	if payment_method == "" {
+		return []models.Purchase{}, fmt.Errorf("payment method is required")
+	}
+
+	client, err := config.GetClientMongoDB()
+	if err != nil {
+		return []models.Purchase{}, fmt.Errorf("failed to connect to MongoDB: %v", err)
+	}
+
+	defer func() {
+		if err := client.Disconnect(ctx); err != nil {
+			fmt.Println("Error disconnecting from MongoDB:", err)
+		}
+	}()
+
+	filter := bson.M{"paymentmethod": payment_method}
+
+	collection := client.Database("kiwify").Collection("purchases")
+	cursor, err := collection.Find(ctx, filter)
+	if err != nil {
+		return []models.Purchase{}, fmt.Errorf("failed to find documents: %v", err)
+	}
+	defer cursor.Close(ctx)
+
+	var results []models.Purchase
+
+	for cursor.Next(ctx) {
+		var purchase models.Purchase
+		if err := cursor.Decode(&purchase); err != nil {
+			return []models.Purchase{}, fmt.Errorf("failed to decode document: %v", err)
+		}
+		results = append(results, purchase)
+	}
+	if err := cursor.Err(); err != nil {
+
+		return []models.Purchase{}, fmt.Errorf("cursor error: %v", err)
+	}
+	if len(results) == 0 {
+		return []models.Purchase{}, fmt.Errorf("no documents found with payment method: %s", payment_method)
+	}
+	return results, nil
+}
