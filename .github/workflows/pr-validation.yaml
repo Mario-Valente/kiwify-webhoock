@@ -22,3 +22,7 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
+      
+      - name: run tests
+        run: |
+         make test
