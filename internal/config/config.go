@@ -28,6 +28,7 @@ type Config struct {
 	ServiceName           string `json:"service_name"`
 	TokenTelegram         string `json:"token_telegram"`
 	ChatID                string `json:"chat_id"`
+	AuthSecret            string `json:"auth_secret"`
 }
 
 func NewConfig() *Config {
@@ -41,6 +42,7 @@ func NewConfig() *Config {
 		Port:          getEnv("PORT", ":3000"),
 		TokenTelegram: getEnv("TOKEN_TELEGRAM", ""),
 		ChatID:        getEnv("CHAT_ID", ""),
+		AuthSecret:    getEnv("JWT_SECRET", "secret123"),
 	}
 }
 

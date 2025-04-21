@@ -7,6 +7,7 @@ import (
 	"github.com/Mario-Valente/kiwify-webhoock/cmd"
 	"github.com/Mario-Valente/kiwify-webhoock/internal/config"
 	"github.com/Mario-Valente/kiwify-webhoock/internal/health"
+	"github.com/Mario-Valente/kiwify-webhoock/internal/middleware"
 	webhook "github.com/Mario-Valente/kiwify-webhoock/internal/webhoock/controllers"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -16,6 +17,8 @@ func main() {
 
 	config := config.NewConfig()
 	app := fiber.New()
+
+	app.Use(middleware.AuthMiddelware)
 
 	health.Register(app)
 	webhook.Register(app)
