@@ -56,10 +56,10 @@ func getEnv(key string, defaultValue string) string {
 func (c *Config) CreateURIMongoDB() string {
 	var uri string
 
-	if c.Env == "development" || c.Env == "production" {
+	if c.Env != "production" {
 		uri = fmt.Sprintf("mongodb://%s:%s@localhost:27017", c.Key, c.Secret)
 	} else {
-		uri = c.MongoURL
+		uri = fmt.Sprintf("mongodb://%s:%s@%s", c.Key, c.Secret, c.MongoURL)
 	}
 
 	return uri
